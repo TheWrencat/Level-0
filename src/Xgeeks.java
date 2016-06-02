@@ -12,11 +12,11 @@
 	public static void main(String[] args) {
 
 			// 1. Save the superpower for each person in a variable.
-String Wren = "Shapeshifting";
-String June = "Writing recipies";
-String Mychel = "Mind compelling";
-String Drew = "Excuses that work";
-String Maria = "Eating a lot";
+String Wren = "shapeshifting";
+String June = "writing recipies";
+String Mychel = "mind compelling";
+String Drew = "excuses that work";
+String Maria = "eating a lot";
 
 			// 2. Ask the user to enter a name. Store their answer in a variable.
 String superHero = JOptionPane.showInputDialog("What's your name?");
