@@ -1,71 +1,94 @@
-import ddf.minim.*;
-//water fill isnt working if rain misses the first time
-Minim minim;
-AudioSample sound;
-PImage ireland;
+//drop properties
 int yDrop = 0;
-int speed = 2;
+int speed = 3;
 int xDrop = 50;
-int Score = 0;
+boolean missed = false;
+
+//game properties
 int levelProgress = 0;
+int levelGoal = 5;
+
+int Score = 0;
 int level = 1;
-int fillY = 600;
-int fillH = 0;
+
+//bucket properties
+int bucketPos = 600;
+int bucketSize = 50;
+int bucketTop = bucketPos-bucketSize;
+
+
+void drawBucket(){
+  float fillRate = (levelProgress / float(levelGoal));
+  int fillH = round(bucketSize * fillRate);
+  int fillY = bucketPos - fillH;
+  
+  fill(200, 150, 150);
+  rect(mouseX, bucketTop, bucketSize, bucketSize); //bucket
+  
+  fill(100, 150, 200);
+  rect(mouseX, fillY, bucketSize, fillH); //water
+}
+
+void resetDrop() {
+  yDrop=0;
+  xDrop=(int)random(700);
+  missed = false;
+}
+
 void setup() {
   size(700, 700);
-  ireland = loadImage("RainCloud.jpeg");
-  minim = new Minim (this);
-  sound = minim.loadSample("waterDrop.aiff");
 }
+
 void draw()
 {
-//missing the drop
-  background(ireland);
+  //creating the board
+  background(50, 50, 50);
   textSize(25);
   text("Score:"+Score, 10, 40);
   text("Level:"+level, 10, 70);
   fill(100, 150, 200);
   noStroke();
-  ellipse(xDrop, yDrop+=speed, 4, 10);
+
+  //drop
+  ellipse(xDrop, yDrop+=speed, 8, 14);
   fill(100, 200, 150);
-  if (yDrop>=700) {
-    yDrop=0;
-    xDrop=(int)random(700);
+
+  //reseting the game(failing)
+  if (yDrop>= 700) {
+    resetDrop();
     Score=0;
-    fillY=675;
-    fillH=0;
     levelProgress=0;
-    level=0;
-    speed=2;
-    sound.trigger();
+    level=1;
+    speed=3;
   }
-//getting a point
-  if (yDrop>=550) {
-    if (xDrop>=mouseX) {
-      if (xDrop<=mouseX+50) {
-        fill(100, 150, 200);
-        yDrop=0;
-        xDrop=(int)random(200);
+  //getting a point
+  //if the drop is below the top of the bucket
+  if (yDrop>=bucketTop) {
+    //checking to see if we have missed it yet
+    if (missed == false) {
+      //checking if its in the bucket
+      if (xDrop>=mouseX && xDrop<=mouseX+bucketSize) {
+        resetDrop();
         Score++;
         levelProgress++;
-        fillY-=2;
-        fillH+=2;
+      } else {
+        missed = true;
       }
     }
   }
+  
   //bucket and water filling
-  fill(100, 200, 150);
-  rect(mouseX, 550, 50, 50);//bucket
-  fill(100, 150, 200);
-  rect(mouseX, fillY, 50, fillH);//water
+  drawBucket();
 
-//next level
-  if (levelProgress==25) {
+  //next level
+  if (levelProgress==levelGoal) {
     level++;
     speed++;
-    fillH=0;
     levelProgress=0;
-    fillY=600;
   }
 }
+
+
+
+
 
